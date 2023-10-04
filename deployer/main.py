@@ -2,7 +2,9 @@ from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Header
 from utils import check_signature, get_workflows, get_action_by_workflow, run_action
 from notifications import post_discord_webhook
+from dotenv import load_dotenv
 
+load_dotenv('.env')
 app = FastAPI()
 
 @app.post("/github")
