@@ -5,7 +5,7 @@
 		"path": "/root/front-producao/",
 		"commands": [
 			["git", "pull"],
-			["docker-compose", "up", "--build", "-d"]
+			["sudo", "docker-compose", "up", "--build", "-d"]
 		]
 	}
 }
