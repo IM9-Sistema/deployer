@@ -1,0 +1,11 @@
+{
+	"workflow_id": 71570015,
+	"name": "Frontend",
+	"deploy": {
+		"path": "C:\\Users\\joao_\\Desktop\\front-producao\\",
+		"commands": [
+			["git", "pull"],
+			["docker-compose", "up", "--build", "-d"]
+		]
+	}
+}
