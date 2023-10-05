@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Annotated
 from fastapi import Depends, FastAPI, HTTPException, Header
 from utils import check_signature, get_workflows, get_action_by_workflow, run_action
@@ -19,6 +20,9 @@ async def post_event(
 		
 		case "workflow_run", {"action": "completed", "workflow_run": {"workflow_id": workflow_id, 'conclusion': 'success', 'name': name}} if workflow_id in get_workflows():
 			action = get_action_by_workflow(workflow_id)
+			if datetime.now().weekday() == 3:
+				post_discord_webhook(f'⚠️ `AVISO`: Uma nova atualização foi enviada hoje (**SEXTA-FEIRA**)', f'`[{action["name"]}]` 🚧 - Atualização detectada.')
+
 			if not action:
 				return {"message": "Ignored (Action not found)"} 
 			post_discord_webhook(f'✅ Workflow `{name}` concluido com status de `sucesso`.\n⌚ Iniciando processo de deploy automático.', f'`[{action["name"]}]` 🚧 - Realizando deploy automático.')
