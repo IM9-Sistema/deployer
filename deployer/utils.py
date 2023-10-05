@@ -45,13 +45,14 @@ def get_action_by_workflow(id: int) -> dict[str, Any|str|dict[str, Any|int|str]]
 def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]]) -> bool:
 	deploy = action['deploy']
 	chdir(deploy['path'])
-	for id, command in enumerate(deploy['commands']):
+	for id, instruction in enumerate(deploy['commands']):
+		command = instruction['command']
 		post_discord_webhook(f'⌚ Executando etapa #`{id}` (`{" ".join(command)}`)', f'`[{action["name"]}]` ⌚ Performando deploy...')
 		process = subprocess.Popen(
 			command,
 			stdout=subprocess.PIPE,
 			stderr=subprocess.PIPE,
-			shell=True,
+			shell=instruction['shell'],
 			universal_newlines=True
 		)
 		while True:
