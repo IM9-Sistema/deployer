@@ -1,8 +1,8 @@
 {
-	"workflow_id": 71570015,
-	"name": "Frontend",
+	"workflow_id": 71697701,
+	"name": "Microserviço de PDF",
 	"deploy": {
-		"path": "/root/front-producao/",
+		"path": "/root/Backend/pdfs/",
 		"commands": [
 			{"command": ["git", "pull"], "shell": false},
 			{"command": ["/usr/bin/docker-compose", "up", "--build", "-d"], "shell": false}
