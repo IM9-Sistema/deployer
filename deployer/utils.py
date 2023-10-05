@@ -1,6 +1,7 @@
 import json
 from os import environ, listdir, chdir
 import subprocess
+import threading
 from typing import Annotated, Any
 import hashlib
 import hmac
@@ -66,7 +67,7 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]]) -> bool:
 	post_discord_webhook(f'✅ Deploy concluido com sucesso e sem erros.', f'`[{action["name"]}]` ✅ Deploy automático concluido.')
 
 def run_action(action):
-	multiprocessing.Process(target=_run_action, args=(action,), daemon=True).start()
+	threading.Thread(target=_run_action, args=(action,), daemon=True).start()
 
 
 # From https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries
