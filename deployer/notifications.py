@@ -17,7 +17,7 @@ def post_discord_webhook(content: str, title: str, fields: list[dict[str, str]] 
 		],
 		"attachments": []
 		}
-	requests.post(
+	return requests.post(
 		url,
 		data=json.dumps(payload),
 		headers={"Content-Type": "application/json"}
