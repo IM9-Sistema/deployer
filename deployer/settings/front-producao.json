@@ -6,7 +6,7 @@
 		"commands": [
 			{"command": ["git", "pull"], "shell": false},
 			{"command": ["whoami"], "shell": false},
-			{"command": ["docker-compose", "up", "--build", "-d"], "shell": false}
+			{"command": ["/usr/bin/docker-compose", "up", "--build", "-d"], "shell": false}
 		]
 	}
 }
