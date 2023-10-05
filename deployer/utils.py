@@ -52,6 +52,7 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]]) -> bool:
 			command,
 			stdout=subprocess.PIPE,
 			stderr=subprocess.PIPE,
+			stdin=subprocess.PIPE,
 			shell=instruction['shell'],
 			universal_newlines=True
 		)
