@@ -20,7 +20,7 @@ async def post_event(
 		
 		case "workflow_run", {"action": "completed", "workflow_run": {"workflow_id": workflow_id, 'conclusion': 'success', 'name': name}} if workflow_id in get_workflows():
 			action = get_action_by_workflow(workflow_id)
-			if datetime.now().weekday() == 3:
+			if datetime.now().weekday() == 4:
 				post_discord_webhook(f'⚠️ `AVISO`: Uma nova atualização foi enviada hoje (**SEXTA-FEIRA**)', f'`[{action["name"]}]` 🚧 - Atualização detectada.')
 
 			if not action:
