@@ -55,16 +55,15 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]]) -> bool:
 			shell=instruction['shell'],
 			universal_newlines=True
 		)
-		while True:
-			return_code = process.poll()
-			if return_code == None:
-				continue
-			elif return_code != 0:
-				post_discord_webhook(f'❌ Etapa #`{id}` (`{" ".join(command)}`) retornou uma exceção.\n```\n{process.stderr.read()}\n```', f'`[{action["name"]}]` ❌ Falha ao realizar deploy automático.')
-				return
-			else:
-				post_discord_webhook(f'✅ Etapa #`{id}` (`{" ".join(command)}`) executada com sucesso.\n```\n{process.stdout.read()}\n```', f'`[{action["name"]}]` ✅ Etapa concluida.')
-				break
+		
+		return_code = process.wait()
+
+		if return_code != 0:
+			post_discord_webhook(f'❌ Etapa #`{id}` (`{" ".join(command)}`) retornou uma exceção.\n```\n{process.stderr.read()}\n```', f'`[{action["name"]}]` ❌ Falha ao realizar deploy automático.')
+			return
+		else:
+			post_discord_webhook(f'✅ Etapa #`{id}` (`{" ".join(command)}`) executada com sucesso.\n```\n{process.stdout.read()}\n```', f'`[{action["name"]}]` ✅ Etapa concluida.')
+			break
 	post_discord_webhook(f'✅ Deploy concluido com sucesso e sem erros.', f'`[{action["name"]}]` ✅ Deploy automático concluido.')
 
 def run_action(action):
