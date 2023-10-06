@@ -1,0 +1,10 @@
+{
+	"workflow_id": 71800208,
+	"name": "Backend/API",
+	"deploy": {
+		"path": "/root/Backend/Backend/Fontes/Backend/src",
+		"commands": [
+			{"command": ["git", "pull"], "shell": false}
+		]
+	}
+}
