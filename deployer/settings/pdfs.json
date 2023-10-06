@@ -4,7 +4,7 @@
 	"deploy": {
 		"path": "/root/Backend/pdfs/",
 		"commands": [
-			{"command": ["git", "pull"], "shell": false},
+			{"command": ["git", "pullr"], "shell": false},
 			{"command": ["/usr/bin/docker-compose", "up", "--build", "-d"], "shell": false}
 		]
 	}
