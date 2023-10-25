@@ -4,6 +4,7 @@
 	"deploy": {
 		"path": "/root/Backend/Backend/Fontes/Backend/src",
 		"commands": [
+			{"command": ["python3.11", "-m", "pip", "install", "-r", "../requirements.txt"], "shell": false},
 			{"command": ["git", "pull"], "shell": false}
 		]
 	}
