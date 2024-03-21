@@ -1,40 +1,67 @@
 from datetime import datetime
-from typing import Annotated
-from fastapi import Depends, FastAPI, HTTPException, Header
-from utils import check_signature, get_workflows, get_action_by_workflow, run_action
-from notifications import post_discord_webhook
+import json
+from multiprocessing import freeze_support
+import socket
+from websockets.sync.client import connect
+from websockets.exceptions import WebSocketException
 from dotenv import load_dotenv
-
+from os import environ
+import requests
+from utils import get_config, get_actions, get_workflows, get_action_by_workflow, run_action
+from notifications import post_discord_webhook
+from logging import basicConfig, info
 load_dotenv('.env')
-app = FastAPI()
+config = get_config()
 
-@app.post("/github")
-async def post_event(
-	payload: dict,
-	x_github_event: Annotated[str, Header()],
-	valid: bool = Depends(check_signature),
-) -> dict:
-	match x_github_event, payload:
-		case "ping", _:
-			return {"message": "pong"}
-		
-		case "workflow_run", {"action": "completed", "workflow_run": {"workflow_id": workflow_id, 'conclusion': 'success', 'name': name}} if workflow_id in get_workflows():
-			action = get_action_by_workflow(workflow_id)
-			if datetime.now().weekday() == 4:
-				post_discord_webhook(f'⚠️ `AVISO`: Uma nova atualização foi enviada hoje (**SEXTA-FEIRA**)', f'`[{action["name"]}]` 🚧 - Atualização detectada.')
+def authenticate() -> str:
+	config = get_config()
+	response = requests.post(
+		environ.get("AUTH_URL"), 
+		headers={'x-websocket-key': environ.get("WEBSOCKET_KEY")},
+		json={
+			"id": config['id'],
+			"name": config['name'],
+			"hostname": socket.gethostname(),
+			"project_name": config["project_name"],
+			"deploys": get_actions()
+		}
+	)
 
-			if not action:
-				return {"message": "Ignored (Action not found)"} 
-			post_discord_webhook(f'✅ Workflow `{name}` concluido com status de `sucesso`.\n⌚ Iniciando processo de deploy automático.', f'`[{action["name"]}]` 🚧 - Realizando deploy automático.')
+	assert response.status_code == 200, "Failed to authenticate"
+	return response.json()['data']
 
-			run_action(action)
-			return {"message": "OK"}
-		
-		case "workflow_run", _:
-			return {"message": "Ignored (Not in settings, concluded or succeded.)"}
-		
-		case _:
-			raise HTTPException(
-				status_code=501,
-				detail="Event not supported."
-			)
+
+def main():
+	while True:
+		try:
+			key = authenticate()
+			with connect(environ.get('WEBSOCKET_URL'), additional_headers={'x-session-key': key}) as conn:
+				while True:
+					data = json.loads(conn.recv())
+					
+					match data:
+						case {"event": "workflow_run", "data": {"id": id, "name": name, "concluded": True}} if id in get_workflows():
+							conn.send(json.dumps({"event": "acknowledge", "data": {"workflow_id": id}}))
+							action = get_action_by_workflow(id)
+							if datetime.now().weekday() == 4:
+								post_discord_webhook(f'⚠️ `AVISO`: Uma nova atualização foi enviada hoje (**SEXTA-FEIRA**)', f'`[{action["name"]}]` 🚧 - Atualização detectada.')
+
+							discord_id = post_discord_webhook(f'✅ Workflow `{name}` concluido com status de `sucesso`.\n⌚ Iniciando processo de deploy automático.', f'`[{action["name"]}]` 🚧 - Realizando deploy automático.')
+
+							run_action(action, discord_id)
+						case _:
+							continue
+
+		except WebSocketException:
+			# TODO: Notify exception
+			continue
+		except requests.exceptions.RequestException:
+			pass
+		except AssertionError:
+			# TODO: Notify exception
+			continue
+		except KeyboardInterrupt:
+			return
+if __name__ == "__main__":
+	freeze_support()
+	main()	

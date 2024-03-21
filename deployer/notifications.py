@@ -1,7 +1,8 @@
 import json
 import requests
 
-def post_discord_webhook(content: str, title: str, fields: list[dict[str, str]] = None) -> None:
+
+def post_discord_webhook(content: str, title: str, fields: list[dict[str, str]] = None, id: int = None) -> None:
 	import utils
 	url = utils.get_discord_webhook_url()
 	payload ={
@@ -17,8 +18,17 @@ def post_discord_webhook(content: str, title: str, fields: list[dict[str, str]] 
 		],
 		"attachments": []
 		}
+	print(id)
+	if id:
+		resp = requests.patch(
+			url+"/messages/"+id,
+			data=json.dumps(payload),
+			headers={"Content-Type": "application/json"}
+		)
+		return resp.json()['id']
+
 	return requests.post(
-		url,
+		url+"?wait=true",
 		data=json.dumps(payload),
 		headers={"Content-Type": "application/json"}
-	)
+	).json()['id']
