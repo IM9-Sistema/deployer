@@ -50,6 +50,7 @@ def main():
 
 							run_action(action, discord_id)
 						case _:
+							print(f"Skipped {data}")
 							continue
 
 		except WebSocketException:
