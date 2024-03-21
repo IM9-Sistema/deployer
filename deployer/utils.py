@@ -55,7 +55,7 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]], discord_id) -
 	fields = []
 	title = f'`[{action["name"]}]` ⌚ Performando deploy...'
 	for id, instruction in enumerate(deploy['commands']):
-		content = f'Deploy em execução. `({id+1}/{len(deploy['commands'])})`'
+		content = f'Deploy em execução. `({id+1}/{len(deploy["commands"])})`'
 		command = instruction['command']
 		field = {
 			"name": f"⏳ Etapa `#{id+1}`",
