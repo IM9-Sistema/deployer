@@ -86,7 +86,7 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]], discord_id) -
 				
 				if time.time() - last_update > 0.05:
 					print('update')
-					field['value'] = f'<:im9:1222527177963212830> Em execução\n```{max_size(output, 240)}\n```'
+					field['value'] = f'<a:gearspin:1222527177963212830> Em execução\n```{max_size(output, 240)}\n```'
 					post_discord_webhook(content, title, fields, id=discord_id)
 					last_update = time.time()
 				continue
