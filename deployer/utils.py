@@ -53,7 +53,7 @@ def _run_action(action: dict[str, Any|str|dict[str, Any|int|str]], discord_id) -
 	deploy = action['deploy']
 	chdir(deploy['path'])
 	fields = []
-	title = f'`[{action["name"]}]` ⌚ Performando deploy...'
+	title = f'`[{action["name"]}]` <a:gearspin:1222527177963212830> Performando deploy...'
 	for id, instruction in enumerate(deploy['commands']):
 		content = f'Deploy em execução. `({id+1}/{len(deploy["commands"])})`'
 		command = instruction['command']
